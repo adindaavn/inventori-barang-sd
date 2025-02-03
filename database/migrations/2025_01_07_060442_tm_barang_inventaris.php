@@ -21,8 +21,8 @@ return new class extends Migration
             $table->char('br_sts', 2)->nullable();
             $table->timestamps();
 
-            $table->foreign('jns_brg_kode')->references('jns_brg_kode')->on('tr_jenis_barang')->onDelete('cascade');
-            $table->foreign('user_id')->references('user_id')->on('tm_user')->onDelete('cascade');
+            $table->foreign('jns_brg_kode')->references('jns_brg_kode')->on('tr_jenis_barang')->onDelete('set null')->onUpdate('cascade');
+            $table->foreign('user_id')->references('user_id')->on('tm_user')->onDelete('set null')->onUpdate('cascade');
         });
     }
 

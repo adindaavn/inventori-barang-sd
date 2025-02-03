@@ -4,13 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class BarangInventaris extends Model
 {
     protected $primaryKey = 'br_kode';
     protected $table = 'tm_barang_inventaris';
-    public $incrementing = false; 
+    public $incrementing = false;
+    protected $keyType = 'string';
     protected $fillable = [
         'br_kode',
         'jns_brg_kode',
@@ -26,23 +28,22 @@ class BarangInventaris extends Model
         parent::boot();
 
         static::creating(function ($model) {
-            // Tahun saat ini
-            $tahun = date('Y');
+            $model->user_id = Auth::id();
 
-            // Ambil kode terakhir dari tabel
+            $model->br_tgl_entry = now();
+
+            $tahun =  date('Y', strtotime($model->br_tgl_terima));
+
             $lastKode = DB::table('tm_barang_inventaris')
             ->where('br_kode', 'like', "INV$tahun%")
             ->orderBy('br_kode', 'desc')
             ->value('br_kode');
 
-            // Jika ada kode terakhir, ambil nomor urutnya
             $lastNumber = $lastKode ? intval(substr($lastKode, 7)) : 0;
 
-            // Tambahkan 1 untuk nomor urut baru
             $newNumber = $lastNumber + 1;
 
-            // Format br_kode baru
-            $model->br_kode = sprintf("INV%s%04d", $tahun, $newNumber); // 4 digit leading zero
+            $model->br_kode = sprintf("INV%s%04d", $tahun, $newNumber);
         });
     }
 }

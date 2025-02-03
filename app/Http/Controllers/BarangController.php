@@ -14,8 +14,9 @@ class BarangController extends Controller
      */
     public function index()
     {
+        $jns = JenisBarang::all();
         $barang = BarangInventaris::all();
-        return view('barang.index', compact('barang'));
+        return view('barang.index', compact('barang', 'jns'));
     }
 
     /**
@@ -33,8 +34,16 @@ class BarangController extends Controller
      */
     public function store(Request $request)
     {
-        BarangInventaris::create($request->all());
-        return redirect()->route('barang.index');
+        $validated = $request->validate([
+            'jns_brg_kode' => 'required|string|exists:tr_jenis_barang,jns_brg_kode',
+            'br_nama' => 'required|string|max:50',
+            'br_tgl_terima' => 'required|date',
+            'br_sts' => 'required|in:0,1,2,3'
+        ]);
+
+        BarangInventaris::create($validated);
+
+        return redirect()->route('barang.index')->with('success', 'Barang Inventaris added successfully.');
     }
 
     /**
@@ -60,8 +69,15 @@ class BarangController extends Controller
      */
     public function update(Request $request, BarangInventaris $barang)
     {
-        $barang->update($request->all());
-        return redirect()->route('barang.index');
+        $validated = $request->validate([
+            'jns_brg_kode' => 'required|string|exists:tr_jenis_barang,jns_brg_kode',
+            'br_nama' => 'required|string|max:50',
+            'br_tgl_terima' => 'required|date',
+            'br_sts' => 'required|in:0,1,2,3'
+        ]);
+
+        $barang->update($validated);
+        return redirect()->route('barang.index')->with('success', 'Barang Inventaris updated successfully.');
     }
 
     /**
@@ -69,7 +85,16 @@ class BarangController extends Controller
      */
     public function destroy(BarangInventaris $barang)
     {
-        $barang->delete();
-        return redirect()->route('barang.index');
+        try {
+            // Attempt to delete the record
+            $barang->delete();
+
+            // Redirect with success message
+            return redirect()->route('barang.index')->with('success', 'Barang Inventaris deleted successfully.');
+        } catch (\Exception $e) {
+            // Handle exceptions, such as database constraints (e.g., foreign key violations)
+            return redirect()->route('barang.index')->with('error', 'Failed to delete Barang Inventaris: ' . $e->getMessage());
+        }
     }
+
 }

@@ -15,12 +15,12 @@ return new class extends Migration
             $table->string('pbd_id', 20)->primary();
             $table->string('pb_id', 20)->nullable();
             $table->string('br_kode', 12)->nullable();
-            $table->dateTime('pdb_tgl')->nullable();
-            $table->char('pdb_sts', 2)->nullable();
+            $table->dateTime('pbd_tgl')->nullable();
+            $table->char('pbd_sts', 2)->nullable();
             $table->timestamps();
 
-            $table->foreign('pb_id')->references('pb_id')->on('tm_peminjaman')->onDelete('cascade');
-            $table->foreign('br_kode')->references('br_kode')->on('tm_barang_inventaris')->onDelete('cascade');
+            $table->foreign('pb_id')->references('pb_id')->on('tm_peminjaman')->onDelete('set null')->onUpdate('cascade');
+            $table->foreign('br_kode')->references('br_kode')->on('tm_barang_inventaris')->onDelete('set null')->onUpdate('cascade');
         });
     }
 

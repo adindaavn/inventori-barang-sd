@@ -18,10 +18,10 @@ return new class extends Migration
             $table->string('pb_no_siswa', 20)->nullable();
             $table->string('pb_nama_siswa', 100)->nullable();
             $table->dateTime('pb_harus_kembali_tgl')->nullable();
-            $table->string('pb_stat', 2)->nullable();
+            $table->string('pb_sts', 2)->nullable();
             $table->timestamps();
 
-            $table->foreign('user_id')->references('user_id')->on('tm_user')->onDelete('cascade');
+            $table->foreign('user_id')->references('user_id')->on('tm_user')->onDelete('set null')->onUpdate('cascade');
         });
     }
 

@@ -16,11 +16,11 @@ return new class extends Migration
             $table->string('pb_id', 20)->nullable();
             $table->string('user_id', 10)->nullable();
             $table->dateTime('kembali_tgl')->nullable();
-            $table->string('kembali_stat', 2)->nullable();
+            $table->string('kembali_sts', 2)->nullable()->default(1);
             $table->timestamps();
 
-            $table->foreign('pb_id')->references('pb_id')->on('tm_peminjaman')->onDelete('cascade');
-            $table->foreign('user_id')->references('user_id')->on('tm_user')->onDelete('cascade');
+            $table->foreign('pb_id')->references('pb_id')->on('tm_peminjaman')->onDelete('set null')->onUpdate('cascade');
+            $table->foreign('user_id')->references('user_id')->on('tm_user')->onDelete('set null')->onUpdate('cascade');
         });
     }
 

@@ -16,11 +16,27 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+    protected $table = 'tm_user';
+    protected $primaryKey = 'user_id';
+    public $incrementing = false;
+    protected $keyType = 'string';
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+        'user_nama',
+        'user_pass',
+        'user_hak',
+        'user_sts'
     ];
+
+    public function getAuthIdentifier()
+    {
+        return $this->user_id; // Use custom 'user_id' field
+    }
+    
+    // Kolom password custom (default `password`)
+    public function getAuthPassword()
+    {
+        return $this->user_pass;
+    }
 
     /**
      * The attributes that should be hidden for serialization.

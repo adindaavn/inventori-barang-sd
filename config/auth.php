@@ -40,6 +40,11 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        'custom' => [ // Guard baru
+            'driver' => 'session',
+            'provider' => 'tm_user',
+        ],
     ],
 
     /*
@@ -63,6 +68,11 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', App\Models\User::class),
+        ],
+
+        'tm_user' => [ // Provider baru
+            'driver' => 'eloquent',
+            'model' => App\Models\User::class, // Gunakan model custom
         ],
 
         // 'users' => [

@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BarangDipinjam;
 use App\Models\BarangInventaris;
 use App\Models\BarangTersedia;
 use App\Models\Peminjaman;
 use App\Models\PeminjamanBarang;
-use App\Models\Pengembalian;
+use App\Models\TrSiswa;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class PeminjamanController extends Controller
 {
@@ -18,8 +18,10 @@ class PeminjamanController extends Controller
      */
     public function index()
     {
+        
+        $dipinjam = BarangDipinjam::all();
         $peminjaman = Peminjaman::all();
-        return view('peminjaman.index', compact('peminjaman'));
+        return view('peminjaman.index', compact('peminjaman', 'dipinjam'));
     }
 
     /**
@@ -27,10 +29,11 @@ class PeminjamanController extends Controller
      */
     public function create()
     {
+        $siswa = TrSiswa::all();
         $tersedia = BarangTersedia::all();
         $barang = BarangInventaris::all();
         $users = User::all();
-        return view('peminjaman.create', compact('users', 'tersedia', 'barang'));
+        return view('peminjaman.create', compact('users', 'tersedia', 'barang', 'siswa'));
     }
 
     /**
@@ -38,12 +41,18 @@ class PeminjamanController extends Controller
      */
     public function store(Request $request)
     {
+        $pbTgl = $request->input('pb_tgl');
+        $pbTgl = str_replace('T', ' ', $pbTgl) . ':00';
+        $request->merge(['pb_tgl' => $pbTgl]);
+
+        $pbHrsTgl = $request->input('pb_harus_kembali_tgl');
+        $pbHrsTgl = str_replace('T', ' ', $pbHrsTgl) . ':00';
+        $request->merge(['pb_harus_kembali_tgl' => $pbHrsTgl]);
+
         $validated = $request->validate([
             'pb_no_siswa' => 'required|integer',
             'pb_nama_siswa' => 'required|string|max:100',
-            'pb_tgl' => 'required|date',
-            'pb_harus_kembali_tgl' => 'required|date|after_or_equal:pb_tgl',
-            'pb_sts' => 'required|in:0,1',
+            'pb_harus_kembali_tgl' => 'required|date_format:Y-m-d H:i:s',
             'br_kode' => 'required|array|min:1',
             'br_kode.*' => 'required|string|exists:tm_barang_inventaris,br_kode'
         ]);
@@ -56,8 +65,8 @@ class PeminjamanController extends Controller
             PeminjamanBarang::create([
                 'pb_id' => $pb_id,
                 'br_kode' => $br_kode,
-                'pbd_tgl' => $validated['pb_tgl'],
-                'pbd_sts' => $validated['pb_sts'],
+                'pbd_tgl' => $peminjaman->pb_tgl,
+                'pbd_sts' => $peminjaman->pb_sts,
             ]);
         }
 
@@ -119,9 +128,23 @@ class PeminjamanController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Peminjaman $peminjaman)
+    public function destroy($kode)
     {
-        $peminjaman->delete();
-        return redirect()->route('peminjaman.index')->with('success', 'Peminjaman deleted successfully.');
+        $peminjaman = Peminjaman::where('br_kode', $kode)->first();
+
+        if (!$peminjaman) {
+            return redirect()->route('barang.index')->with('error', 'Barang Inventaris not found.');
+        }
+
+        if (PeminjamanBarang::where('br_kode', $kode)->exists()) {
+            return redirect()->route('barang.index')->with('error', 'Barang Inventaris recorded in Peminjaman Barang');
+        }
+
+        try {
+            $peminjaman->delete();
+            return redirect()->route('barang.index')->with('success', 'Barang Inventaris deleted successfully.');
+        } catch (\Exception $e) {
+            return redirect()->route('barang.index')->with('error', 'Failed to delete Barang Inventaris : ' . $e->getMessage());
+        }
     }
 }

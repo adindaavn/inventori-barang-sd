@@ -22261,7 +22261,6 @@ code {
 }
 
 .home-tab .btn {
-  padding: 8px 15px;
   border: 1px solid #CADDFF;
   box-sizing: border-box;
   border-radius: 6px;
@@ -22269,8 +22268,6 @@ code {
   font-weight: 500;
   font-size: 12px;
   line-height: 12px;
-  margin-bottom: 12px;
-  margin-right: 12px;
   align-items: center;
 }
 @media (max-width: 991px) {

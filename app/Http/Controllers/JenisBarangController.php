@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BarangInventaris;
 use App\Models\JenisBarang;
 use Illuminate\Http\Request;
 
@@ -29,9 +30,10 @@ class JenisBarangController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'jns_brg_nama' => 'required|string|max:50'
-        ]
+        $validated = $request->validate(
+            [
+                'jns_brg_nama' => 'required|string|max:50'
+            ]
         );
 
         $validated['jns_brg_nama'] = strtoupper($validated['jns_brg_nama']);
@@ -59,8 +61,14 @@ class JenisBarangController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, JenisBarang $jenis)
+    public function update(Request $request, $kode)
     {
+        $jenis = JenisBarang::where('jns_brg_kode', $kode)->first();
+
+        if (!$jenis) {
+            return redirect()->route('jenis-barang.index')->with('error', 'Jenis Barang not found.');
+        }
+
         $validated = $request->validate(
             [
                 'jns_brg_nama' => 'required|string|max:50'
@@ -78,20 +86,20 @@ class JenisBarangController extends Controller
      */
     public function destroy($kode)
     {
-
         $jenis = JenisBarang::where('jns_brg_kode', $kode)->first();
 
         if (!$jenis) {
             return redirect()->route('jenis-barang.index')->with('error', 'Jenis Barang not found.');
         }
 
+        if (BarangInventaris::where('jns_brg_kode', $kode)->exists()) {
+            return redirect()->route('jenis-barang.index')->with('error', 'Jenis Barang recorded in Barang Inventaris');
+        }
+
         try {
-            // Attempt to delete the record
             $jenis->delete();
-            // Redirect with success message
             return redirect()->route('jenis-barang.index')->with('success', 'Jenis Barang deleted successfully.');
         } catch (\Exception $e) {
-            // Handle exceptions, such as database constraints (e.g., foreign key violations)
             return redirect()->route('jenis-barang.index')->with('error', 'Failed to delete Jenis Barang : ' . $e->getMessage());
         }
     }

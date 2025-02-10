@@ -19,7 +19,8 @@ return new class extends Migration
                 b.br_nama,
                 c.pb_no_siswa,
                 c.pb_nama_siswa, 
-                c.pb_tgl
+                c.pb_tgl,
+                c.pb_id
             FROM td_peminjaman_barang a
             LEFT JOIN tm_barang_inventaris b ON a.br_kode = b.br_kode
             LEFT JOIN tm_peminjaman c ON a.pb_id = c.pb_id

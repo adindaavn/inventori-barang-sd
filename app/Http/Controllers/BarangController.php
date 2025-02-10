@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\BarangInventaris;
 use App\Models\JenisBarang;
+use App\Models\Peminjaman;
+use App\Models\PeminjamanBarang;
 use App\Models\TmUser;
 use Illuminate\Http\Request;
 
@@ -83,17 +85,23 @@ class BarangController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(BarangInventaris $barang)
+    public function destroy($kode)
     {
-        try {
-            // Attempt to delete the record
-            $barang->delete();
+        $barang = BarangInventaris::where('br_kode', $kode)->first();
 
-            // Redirect with success message
+        if (!$barang) {
+            return redirect()->route('barang.index')->with('error', 'Barang Inventaris not found.');
+        }
+
+        if (PeminjamanBarang::where('br_kode', $kode)->exists()) {
+            return redirect()->route('barang.index')->with('error', 'Barang Inventaris recorded in Peminjaman Barang');
+        }
+
+        try {
+            $barang->delete();
             return redirect()->route('barang.index')->with('success', 'Barang Inventaris deleted successfully.');
         } catch (\Exception $e) {
-            // Handle exceptions, such as database constraints (e.g., foreign key violations)
-            return redirect()->route('barang.index')->with('error', 'Failed to delete Barang Inventaris: ' . $e->getMessage());
+            return redirect()->route('barang.index')->with('error', 'Failed to delete Barang Inventaris : ' . $e->getMessage());
         }
     }
 

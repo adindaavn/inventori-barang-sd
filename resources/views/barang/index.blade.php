@@ -11,16 +11,17 @@
         </ul>
     </div>
     @endif
-    @if (session('success'))
-    <div class="alert alert-primary">
-        {{ session('success') }}
-    </div>
-    @endif
     <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="card-title fw-bold m-3">Daftar Barang</h5>
+                <a href="{{ route('barang.create') }}" class="btn btn-primary btn-sm btn-add fw-bold fs-6 text-white">+</a>
+                <!-- <button type="button" class="btn btn-primary btn-sm btn-add fw-bold fs-6" data-bs-toggle="modal" data-bs-target="#jenisModal">+</button> -->
+            </div>
+        </div>
         <div class="card-body">
-            <h5 class="card-title fw-bold m-3">Daftar Barang</h5>
             <div class="table-responsive">
-                <table class="table text-nowrap mb-0 align-middle">
+                <table id="tableBarang" class="table table-striped table-bordered mb-0 align-middle">
                     <thead class="text-dark fs-4">
                         <tr>
                             <th class="border-bottom-0">
@@ -42,7 +43,7 @@
                                 <p class="fw-bold mb-0">Tanggal Entry</p>
                             </th>
                             <th class="border-bottom-0">
-                                <p class="fw-bold mb-0">Status</p>
+                                <p class="fw-bold mb-0">Kondisi</p>
                             </th>
                             <th class="border-bottom-0">
                                 <p class="fw-bold mb-0"> </p>
@@ -61,9 +62,9 @@
                             <td class="border-bottom-0">
                                 <p class="mb-0">
                                     @foreach($jns as $j)
-                                        @if ($j->jns_brg_kode == $data->jns_brg_kode)
-                                            {{$j->jns_brg_nama}}
-                                        @endif
+                                    @if ($j->jns_brg_kode == $data->jns_brg_kode)
+                                    {{$j->jns_brg_nama}}
+                                    @endif
                                     @endforeach
                                 </p>
                             </td>
@@ -81,18 +82,15 @@
                                 <p class="m-0 btn btn-sm btn-rounded btn-inverse-danger">
                                     dihapus
                                 </p>
-                                @endif
-                                @if ($data->br_sts == '1')
+                                @elseif ($data->br_sts == '1')
                                 <p class="m-0 btn btn-sm btn-rounded btn-inverse-primary">
-                                    kondisi baik
+                                    baik
                                 </p>
-                                @endif
-                                @if ($data->br_sts == '2')
+                                @elseif ($data->br_sts == '2')
                                 <p class="m-0 btn btn-sm btn-rounded btn-inverse-warning">
                                     rusak
                                 </p>
-                                @endif
-                                @if ($data->br_sts == '3')
+                                @elseif ($data->br_sts == '3')
                                 <p class="m-0 btn btn-sm btn-rounded btn-inverse-dark">
                                     rusak parah
                                 </p>
@@ -102,6 +100,11 @@
                                 <a href="{{route('barang.edit', $data->br_kode)}}" class="btn btn-sm btn-inverse-secondary">
                                     <i class="ti ti-pencil"></i>
                                 </a>
+                                <button type="button" class="btn btn-sm btn-inverse-danger btn-delete"
+                                    data-id="{{$data->br_kode}}"
+                                    data-action="{{route('barang.destroy', $data->br_kode)}}">
+                                    <i class="ti ti-eraser"></i>
+                                </button>
                                 <!-- <form action="{{route('barang.destroy', $data->br_kode)}}" method="post">
                                     <a href="{{route('barang.edit', $data->br_kode)}}" class="btn btn-sm btn-inverse-secondary">
                                         <i class="ti ti-pencil"></i>

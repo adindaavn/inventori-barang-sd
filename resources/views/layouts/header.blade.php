@@ -110,39 +110,18 @@
                     <!-- nav-item barang -->
                     <li class="nav-item nav-category">Barang</li>
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#barang" aria-expanded="false" aria-controls="barang">
+                        <a class="nav-link" href="{{ route('barang.index') }}">
                             <i class="menu-icon icon-sm fa-sm fa-solid fa-box"></i>
                             <span class="menu-title">Barang Inventaris</span>
-                            <i class="menu-arrow"></i>
                         </a>
-                        <div class="collapse" id="barang">
-                            <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"><a class="nav-link" href="{{ route('barang.index') }}">Daftar Barang</a></li>
-                                <li class="nav-item"><a class="nav-link" href="{{ route('barang.create') }}">Penerimaan Barang</a></li>
-                            </ul>
-                        </div>
                     </li>
 
                     <!-- nav-item peminjaman -->
                     <li class="nav-item nav-category">Peminjaman</li>
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#peminjaman" aria-expanded="false" aria-controls="peminjaman">
+                        <a class="nav-link" href="{{ route('peminjaman.index') }}">
                             <i class="menu-icon fa-xs fa-solid fa-clipboard-list"></i>
                             <span class="menu-title">Peminjaman</span>
-                            <i class="menu-arrow"></i>
-                        </a>
-                        <div class="collapse" id="peminjaman">
-                            <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"><a class="nav-link" href="{{ route('peminjaman.create') }}">Tambah Peminjaman</a></li>
-                                <li class="nav-item"><a class="nav-link" href="{{ route('peminjaman.index') }}">Daftar Peminjaman</a></li>
-                                <li class="nav-item"><a class="nav-link" href="{{ route('barang.dipinjam') }}">Barang Belum Kembali</a></li>
-                            </ul>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('pengembalian.create') }}">
-                            <i class="menu-icon fa-solid fa-clipboard-check"></i>
-                            <span class="menu-title">Pengembalian</span>
                         </a>
                     </li>
                     @endif
@@ -151,18 +130,10 @@
                     <!-- nav-item laporan -->
                     <li class="nav-item nav-category">Laporan</li>
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#laporan" aria-expanded="false" aria-controls="laporan">
+                        <a class="nav-link" href="{{ route('laporan.index') }}">
                             <i class="menu-icon fa-xs fa-solid fa-clipboard-list"></i>
                             <span class="menu-title">Laporan</span>
-                            <i class="menu-arrow"></i>
                         </a>
-                        <div class="collapse" id="laporan">
-                            <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"><a class="nav-link" href="{{ route('laporan.barang-tersedia') }}">Daftar Barang</a></li>
-                                <li class="nav-item"><a class="nav-link" href="{{ route('laporan.pengembalian-barang') }}">Pengembalian Barang</a></li>
-                                <li class="nav-item"><a class="nav-link" href="{{ route('laporan.status-barang') }}">Status Barang</a></li>
-                            </ul>
-                        </div>
                     </li>
 
                     <!-- nav-item referensi -->
@@ -177,6 +148,7 @@
                             <ul class="nav flex-column sub-menu">
                                 <li class="nav-item"><a class="nav-link" href="{{ route('jenis-barang.index') }}">Jenis Barang</a></li>
                                 <li class="nav-item"><a class="nav-link" href="{{ route('daftar-pengguna') }}">Daftar Pengguna</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{{ route('siswa') }}">Siswa</a></li>
                             </ul>
                         </div>
                     </li>
@@ -211,10 +183,12 @@
         <!-- page-body-wrapper ends -->
     </div>
     <!-- container-scroller -->
-
+    <!-- jQuery -->
+    <script src="{{ asset('assets') }}/plugins/jquery/jquery.min.js"></script>
     <!-- plugins:js -->
     <script src="{{ asset('assets') }}/vendors/js/vendor.bundle.base.js"></script>
     <script src="{{ asset('assets') }}/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+    <script src="{{ asset('assets') }}/vendors/sweetalert/sweetalert.min.js"></script>
     <!-- endinject -->
     <!-- Plugin js for this page -->
     <script src="{{ asset('assets') }}/vendors/chart.js/chart.umd.js"></script>
@@ -231,6 +205,7 @@
     <script src="{{ asset('assets') }}/js/todolist.js"></script>
     <!-- endinject -->
     <!-- Custom js for this page-->
+    <script src="{{ asset('assets') }}/assets/js/formpickers.js"></script>
     <script src="{{ asset('assets') }}/assets/js/chart.js"></script>
     <script src="{{ asset('assets') }}/js/jquery.cookie.js" type="text/javascript"></script>
     <script src="{{ asset('assets') }}/js/dashboard.js"></script>
@@ -251,6 +226,104 @@
     <script src="{{ asset('assets') }}/plugins/datatables-buttons/js/buttons.print.min.js"></script>
     <script src="{{ asset('assets') }}/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
     <!-- End custom js for this page-->
+    @if (session('success'))
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: '{{ session("success") }}',
+            timer: 2000,
+            showConfirmButton: false
+        });
+    </script>
+    @endif
+
+    @if (session('error'))
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: '{{ session("error") }}',
+            confirmButtonColor: "#54b4e4",
+        });
+    </script>
+    @endif
+
+    <script>
+        $(document).ready(function() {
+            $(".btn-delete").click(function() {
+                let id = $(this).data("id");
+                let actionUrl = $(this).data("action");
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: "#f95f53",
+                    cancelButtonColor: "#54b4e4",
+                    confirmButtonText: "Delete",
+                    cancelButtonText: "Cancel"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $("<form>", {
+                            "method": "POST",
+                            "action": actionUrl // Gunakan URL dari tombol
+                        }).append(
+                            $("<input>", {
+                                "type": "hidden",
+                                "name": "_token",
+                                "value": "{{ csrf_token() }}"
+                            }),
+                            $("<input>", {
+                                "type": "hidden",
+                                "name": "_method",
+                                "value": "DELETE"
+                            })
+                        ).appendTo("body").submit();
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $(".btn-kembali").click(function() {
+                let id = $(this).data("id");
+                let actionUrl = $(this).data("action");
+
+                Swal.fire({
+                    title: 'Kembalikan peminjaman?',
+                    text: "Make sure barang peminjaman sudah kembali",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: "#34B1AA",
+                    cancelButtonColor: "#54b4e4",
+                    confirmButtonText: "Yes",
+                    cancelButtonText: "No"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $("<form>", {
+                            "method": "POST",
+                            "action": actionUrl
+                        }).append(
+                            $("<input>", {
+                                "type": "hidden",
+                                "name": "_token",
+                                "value": "{{ csrf_token() }}"
+                            })).append(
+                            $("<input>", {
+                                "type": "hidden",
+                                "name": "pb_id",
+                                "value": id
+                            })
+                        ).appendTo("body").submit();
+                    }
+                });
+            });
+        });
+    </script>
     <script>
         $(function() {
             $("#example1").DataTable({
@@ -270,6 +343,22 @@
             });
         });
     </script>
+
+    <script>
+        $(document).ready(function() {
+            $('[id^=table]').DataTable({
+                dom: "<'d-flex align-items-center justify-content-between'Bf>t<'d-flex align-items-center justify-content-between'ip>",
+                // dom: 'Bfrtip',
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print',
+                    {
+                        extend: 'colvis'
+                    }
+                ]
+            });
+        });
+    </script>
+
     <script>
         function previewFoto() {
             const foto = document.querySelector('#foto');

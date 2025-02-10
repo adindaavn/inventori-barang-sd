@@ -30,6 +30,8 @@ class Peminjaman extends Model
 
         static::creating(function ($model) {
             $model->user_id = Auth::id();
+            $model->pb_tgl = now();
+            $model->pb_sts = 1;
 
             $tahun = date('Y', strtotime($model->pb_tgl));
             $bulan = date('m', strtotime($model->pb_tgl));

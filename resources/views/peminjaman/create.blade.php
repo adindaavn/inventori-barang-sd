@@ -2,19 +2,31 @@
 @section('title', 'Tambah Peminjaman')
 @section('content')
 <div class="container-fluid">
+    @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul class="list-star">
+            @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
     <div class="card">
         <div class="card-body">
             <h5 class="card-title fw-semibold m-3">Tambah Peminjaman</h5>
             <form action="{{route('peminjaman.store')}}" method="post" class="form-sample mx-3">
                 @csrf
                 <div class="row">
-                    <div class="mb-3 form-group col-6">
-                        <label for="pb_no_siswa" class="form-label">No Siswa</label>
-                        <input type="text" class="form-control" name="pb_no_siswa" id="pb_no_siswa">
-                    </div>
-                    <div class="mb-3 form-group col-6">
-                        <label for="pb_nama_siswa" class="form-label">Nama Siswa</label>
-                        <input type="text" class="form-control" name="pb_nama_siswa" id="pb_nama_siswa">
+                    <div class="form-group mb-3 col-6">
+                        <label for="pb_no_siswa" class="form-label">Siswa</label>
+                        <select class="form-select js-example-basic-single" name="pb_no_siswa" id="pb_no_siswa">
+                            @foreach($siswa as $s)
+                            <option value="{{$s->no_siswa}}" data-nama="{{$s->nama_siswa}}">
+                                ({{$s->no_siswa}}) {{$s->nama_siswa}} {{$s->kls_siswa}}
+                            </option>
+                            @endforeach
+                        </select>
+                        <input type="hidden" id="pb_nama_siswa" name="pb_nama_siswa">
                     </div>
                 </div>
                 <div class="row">
@@ -43,32 +55,17 @@
                         </div>
                     </div>
                 </div>
-                <!-- <div class="row">
-                    <div class="mb-3 form-group">
-                        <label for="br_kode" class="form-label">Barang Dipinjam</label>
-
-                        <button type="button" class="form-select btn btn-primary" data-bs-toggle="modal" data-bs-target="#defaultModal">Launch demo modal</button>
-
-                        <select class="form-select js-example-basic-multiple w-100" multiple="multiple" name="br_kode" id="br_kode">
-
-                            <select class="form-select js-example-basic-single" name="br_kode" id="br_kode">
-                            @foreach($barang as $br)
-                            <option value="{{$br->br_kode}}">{{$br->br_nama}}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div> -->
                 <div class="row">
-                    <div class="mb-3 form-group col-6">
+                    <!-- <div class="mb-3 form-group col-6">
                         <label for="pb_tgl" class="form-label">Tanggal Peminjaman</label>
-                        <input type="date" class="form-control" name="pb_tgl" id="pb_tgl">
-                    </div>
+                        <input type="datetime-local" class="form-control" name="pb_tgl" id="pb_tgl">
+                    </div> -->
                     <div class="mb-3 form-group col-6">
                         <label for="pb_harus_kembali_tgl" class="form-label">Harus Kembali Tanggal</label>
-                        <input type="date" class="form-control" name="pb_harus_kembali_tgl" id="pb_harus_kembali_tgl">
+                        <input type="datetime-local" class="form-control" name="pb_harus_kembali_tgl" id="pb_harus_kembali_tgl">
                     </div>
                 </div>
-                <div class="mb-3 form-group">
+                <!-- <div class="mb-3 form-group">
                     <label for="pb_sts" class="form-label">Status</label>
                     <div class="d-flex gap-2">
                         <div class="d-flex gap-2">
@@ -80,7 +77,7 @@
                             <label for="pb_baik" class="form-check-label">peminjaman aktif</label>
                         </div>
                     </div>
-                </div>
+                </div> -->
                 <button type="submit" class="btn btn-primary">Tambah</button>
             </form>
         </div>
@@ -106,7 +103,13 @@
                                     <h6 class="fw-bold mb-0">Kode Barang</h6>
                                 </th>
                                 <th class="border-bottom-0">
+                                    <h6 class="fw-bold mb-0">Jenis Barang</h6>
+                                </th>
+                                <th class="border-bottom-0">
                                     <h6 class="fw-bold mb-0">Nama Barang</h6>
+                                </th>
+                                <th class="border-bottom-0">
+                                    <h6 class="fw-bold mb-0">Status</h6>
                                 </th>
                                 <th class="border-bottom-0">
                                     <h6 class="fw-bold mb-0"> </h6>
@@ -123,7 +126,32 @@
                                     <p class="fw-normal">{{$data->br_nama}}</p>
                                 </td>
                                 <td class="border-bottom-0">
-                                    <button type="button" class="btn btn-success btn-sm pilih-barang" data-kode="{{ $data->br_kode }}" data-nama="{{ $data->br_nama }}">Select</button>
+                                    <p class="fw-normal">{{$data->jns_brg_nama}}</p>
+                                </td>
+                                <td class="border-bottom-0">
+                                    @if ($data->br_sts == '0')
+                                    <p class="m-0 btn btn-sm btn-rounded btn-inverse-danger">
+                                        dihapus
+                                    </p>
+                                    @endif
+                                    @if ($data->br_sts == '1')
+                                    <p class="m-0 btn btn-sm btn-rounded btn-inverse-primary">
+                                        kondisi baik
+                                    </p>
+                                    @endif
+                                    @if ($data->br_sts == '2')
+                                    <p class="m-0 btn btn-sm btn-rounded btn-inverse-warning">
+                                        rusak
+                                    </p>
+                                    @endif
+                                    @if ($data->br_sts == '3')
+                                    <p class="m-0 btn btn-sm btn-rounded btn-inverse-dark">
+                                        rusak parah
+                                    </p>
+                                    @endif
+                                </td>
+                                <td class="border-bottom-0">
+                                    <button type="button" class="btn btn-success btn-sm pilih-barang" data-kode="{{ $data->br_kode }}" data-nama="{{ $data->br_nama }}">Pilih</button>
                                 </td>
                             </tr>
                             @endforeach
@@ -132,71 +160,76 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
                 <!-- <button type="submit" class="btn btn-primary">Save changes</button> -->
             </div>
         </div>
     </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const selectedItems = document.getElementById("selected-items");
-        const selectedItemsBody = document.getElementById("selected-items-body");
+    $(document).ready(function() {
+        var firstNamaSiswa = $("#pb_no_siswa").find(":selected").data("nama");
+        $("#pb_nama_siswa").val(firstNamaSiswa); // Set nilai awal
 
-        document.querySelectorAll(".pilih-barang").forEach((btn) => {
-            btn.addEventListener("click", function() {
-                const brKode = this.getAttribute("data-kode");
-                const brNama = this.getAttribute("data-nama");
+        $("#pb_no_siswa").on("change", function() {
+            var namaSiswa = $(this).find(":selected").data("nama");
+            $("#pb_nama_siswa").val(namaSiswa);
+        });
+    });
+</script>
 
-                // Check if the item is already selected
-                if (!document.getElementById(`item-${brKode}`)) {
-                    // Add the selected item to the table
-                    const row = `
-                    <tr id="item-${brKode}">
-                        <td>
-                            <input type="hidden" name="br_kode[${brKode}]" value="${brKode}">
-                            ${brKode}
-                        </td>
-                        <td>${brNama}</td>
-                        <td>
-                            <button type="button" class="btn btn-danger btn-sm hapus-barang" data-item-id="${brKode}">
-                                Hapus
-                            </button>
-                        </td>
-                    </tr>
+<script>
+    $(document).ready(function() {
+        const $selectedItems = $("#selected-items");
+        const $selectedItemsBody = $("#selected-items-body");
+
+        $(".pilih-barang").on("click", function() {
+            const brKode = $(this).data("kode");
+            const brNama = $(this).data("nama");
+
+            // Cek apakah item sudah dipilih
+            if (!$(`#item-${brKode}`).length) {
+                // Tambahkan item ke dalam tabel
+                const row = `
+                <tr id="item-${brKode}">
+                    <td>
+                        <input type="hidden" name="br_kode[${brKode}]" value="${brKode}">
+                        ${brKode}
+                    </td>
+                    <td>${brNama}</td>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm hapus-barang" data-item-id="${brKode}">
+                            Hapus
+                        </button>
+                    </td>
+                </tr>
                 `;
-                    selectedItemsBody.insertAdjacentHTML("beforeend", row);
+                $selectedItemsBody.append(row);
 
-                    selectedItems.classList.remove("d-none");
+                $selectedItems.removeClass("d-none");
 
-                    this.textContent = "Selected";
-                    this.classList.replace("btn-primary", "btn-secondary");
-                    this.disabled = true;
-                }
-            });
+                $(this).text("Dipilih").removeClass("btn-primary").addClass("btn-secondary").prop("disabled", true);
+            }
         });
 
-        // Remove item on "Hapus" button click
-        selectedItemsBody.addEventListener("click", function(event) {
-            if (event.target.classList.contains("hapus-barang")) {
-                const itemId = event.target.getAttribute("data-item-id");
+        // Hapus item ketika tombol "Hapus" diklik
+        $selectedItemsBody.on("click", ".hapus-barang", function() {
+            const itemId = $(this).data("item-id");
 
-                // Remove the item row from the table
-                document.getElementById(`item-${itemId}`).remove();
+            // Hapus baris dari tabel
+            $(`#item-${itemId}`).remove();
 
-                // Re-enable the "Pilih" button and reset its text
-                const selectButton = document.querySelector(`.pilih-barang[data-kode="${itemId}"]`);
-                if (selectButton) {
-                    selectButton.textContent = "Select";
-                    selectButton.classList.replace("btn-secondary", "btn-primary");
-                    selectButton.disabled = false;
-                }
+            // Aktifkan kembali tombol "Pilih"
+            const $selectButton = $(`.pilih-barang[data-kode="${itemId}"]`);
+            if ($selectButton.length) {
+                $selectButton.text("Pilih").removeClass("btn-secondary").addClass("btn-primary").prop("disabled", false);
+            }
 
-                // Hide the table if no items remain
-                if (selectedItemsBody.children.length === 0) {
-                    selectedItems.classList.add("d-none");
-                }
+            // Sembunyikan tabel jika tidak ada item yang tersisa
+            if ($selectedItemsBody.children().length === 0) {
+                $selectedItems.addClass("d-none");
             }
         });
     });

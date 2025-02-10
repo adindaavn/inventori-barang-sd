@@ -25,6 +25,8 @@ use Illuminate\Support\Facades\Route;
         Route::resource('pengembalian', PengembalianController::class);
         Route::resource('jenis-barang', JenisBarangController::class);
         
+        Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+        Route::get('/siswa', [LaporanController::class, 'siswa'])->name('siswa');
         Route::get('/barang-tersedia', [LaporanController::class, 'tersedia'])->name('laporan.barang-tersedia');
         Route::get('/status-barang', [LaporanController::class, 'status'])->name('laporan.status-barang');
         Route::get('/pengembalian-barang', [LaporanController::class, 'pengembalian'])->name('laporan.pengembalian-barang');

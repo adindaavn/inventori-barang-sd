@@ -19,7 +19,8 @@ return new class extends Migration
                 a.jns_brg_kode,
                 b.jns_brg_nama,
                 a.br_nama,
-                a.br_sts
+                a.br_sts,
+                a.br_tgl_terima
             FROM tm_barang_inventaris a 
             LEFT JOIN tr_jenis_barang b ON a.jns_brg_kode = b.jns_brg_kode;
         ");

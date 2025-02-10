@@ -40,8 +40,8 @@
                                 </ul>
                             </div>
                             @endif
-                            <h4>Hello! let's get started</h4>
-                            <h6 class="fw-light">Sign in to continue.</h6>
+                            <h4>Hello! Sign in to continue.</h4>
+                            <h6 class="fw-light">Barang Inventaris</h6>
                             <form class="pt-3" action="{{ route('login.auth') }}" method="post">
                                 @csrf
                                 <div class="form-group">

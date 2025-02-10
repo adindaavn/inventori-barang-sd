@@ -3,11 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Peminjaman;
-use App\Models\PeminjamanBarang;
 use App\Models\Pengembalian;
-use App\Models\TmUser;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class PengembalianController extends Controller
 {
